@@ -1,12 +1,13 @@
-📘 Real-Time Social Media Streaming Project (Databricks)
-📌 Project Overview
+# Real-Time Social Media Streaming Project (Databricks)
 
-This project implements a real-time social media streaming data pipeline using Databricks, Delta Live Tables (DLT), and Unity Catalog.
-Synthetic social media data (users, posts, comments, likes) is continuously generated and ingested as JSON files, processed through a Bronze → Silver → Gold Medallion Architecture, and exposed for analytics and dashboards.
+## Project Overview
+This project implements a **real-time social media streaming data pipeline** using **Databricks**, **Delta Live Tables (DLT)**, and **Unity Catalog**.  
+Synthetic social media data (users, posts, comments, likes) is continuously generated as JSON files and processed using a **Bronze → Silver → Gold Medallion Architecture** for analytics and dashboards.
 
-The project demonstrates production-grade streaming ingestion, data quality enforcement, transformations, and business-level aggregations.
+---
 
-🏗️ Architecture Overview
+## Architecture Overview
+
 Fake Data Generator (JSON)
         ↓
 Unity Catalog Volume (Raw JSON Files)
@@ -19,23 +20,22 @@ Gold Layer (Aggregated Analytics Tables)
         ↓
 Dashboards & Insights
 
-🛠️ Technologies Used
 
-Databricks
+---
 
-Delta Live Tables (DLT)
+## Technologies Used
+- Databricks
+- Delta Live Tables (DLT)
+- Apache Spark Structured Streaming
+- Unity Catalog
+- Python
+- Faker
+- GitHub
 
-Apache Spark Structured Streaming
+---
 
-Unity Catalog
+## Project Structure
 
-Python
-
-Faker
-
-GitHub
-
-📂 Project Structure
 Streaming-data-Social-Media-Project-databricks/
 │
 ├── POC_Streaming_Jeevan/
@@ -50,200 +50,141 @@ Streaming-data-Social-Media-Project-databricks/
 ├── Social_Media_Dashboards         # Databricks dashboards
 ├── README.md
 
-📦 Data Generation (Streaming Source)
-🔹 Description
+---
 
-Synthetic social media data is generated continuously using the Faker library.
-The generator runs multiple threads in parallel to simulate real-time event streams.
+## Data Generation (Streaming Source)
 
-🔹 Data Types Generated
+Synthetic social media data is continuously generated using the **Faker** library.
+Parallel threads simulate real-time event streams for:
 
-Users
+- Users
+- Posts
+- Comments
+- Likes / Reactions
 
-Posts
+### Storage Location (Unity Catalog Volume)
 
-Comments
-
-Likes / Reactions
-
-🔹 Storage Location (Unity Catalog Volume)
 /Volumes/kusha_solutions/jeevan_streaming/my_volume/Raw_JSON_Files/
-├── users/
-├── posts/
-├── comments/
-└── likes/
 
-🔹 Key Characteristics
+- users/
+- posts/
+- comments/
+- likes/
 
-JSON format
+All data is **synthetic and safe for public sharing**.
 
-Continuous file generation
+---
 
-Includes randomness and high-volume interaction patterns
+## Bronze Layer — Raw Streaming Ingestion
 
-Fully synthetic (no real user data)
+The Bronze layer ingests raw JSON files using **Databricks Auto Loader** and Spark Structured Streaming.
 
-🥉 Bronze Layer — Raw Streaming Ingestion
-🔹 Description
+### Features
+- Streaming ingestion (`readStream`)
+- Schema enforcement
+- Ingestion timestamp
+- Source file metadata
 
-The Bronze layer ingests raw JSON files using Databricks Auto Loader with Spark Structured Streaming.
+### Bronze Tables
+- bronze_users
+- bronze_posts
+- bronze_comments
+- bronze_likes
 
-🔹 Features
-
-Streaming ingestion (readStream)
-
-Explicit schema enforcement
-
-Metadata capture:
-
-Ingestion timestamp
-
-Source file path
-
-Fault-tolerant schema tracking
-
-🔹 Bronze Tables
-
-bronze_users
-
-bronze_posts
-
-bronze_comments
-
-bronze_likes
-
-🔹 Schema Checkpoint Location
+### Schema Checkpoint Location
 /Volumes/kusha_solutions/jeevan_streaming/my_volume/autoloader_schema/
 
-🥈 Silver Layer — Data Cleaning & Quality Enforcement
-🔹 Description
+---
 
-The Silver layer cleans and standardizes data from the Bronze layer and applies data quality rules using DLT expectations.
+## Silver Layer — Data Cleaning & Quality Enforcement
 
-🔹 Key Transformations
+The Silver layer cleans and standardizes data from the Bronze layer using **DLT expectations**.
 
-Deduplication based on primary keys
+### Transformations
+- Deduplication
+- Null handling
+- Text standardization
+- Processed timestamp
 
-Null handling with default values
+### Data Quality Rules
+- Mandatory fields must not be null
+- Email format validation
+- Key integrity checks
 
-Text standardization (trim, lowercase)
+### Silver Tables
+- silver_users
+- silver_posts
+- silver_comments
+- silver_likes
 
-Processed timestamp for auditing
+---
 
-🔹 Data Quality Rules (DLT Expectations)
+## Gold Layer — Business Aggregations
 
-Mandatory fields must not be null
+The Gold layer produces analytics-ready tables.
 
-Email format validation
+### Gold Tables
 
-Referential integrity checks
+- gold_top_active_users  
+  Top 10 users based on total likes and comments
 
-🔹 Silver Tables
+- gold_popular_posts  
+  Top 10 posts by combined engagement
 
-silver_users
+- gold_daily_engagement_trends  
+  Daily likes, comments, and total engagement
 
-silver_posts
+- gold_user_engagement_summary  
+  Average likes and comments per post per user
 
-silver_comments
+---
 
-silver_likes
+## Dashboards
 
-🥇 Gold Layer — Business Aggregations
-🔹 Description
+Dashboards are built on top of Gold tables 
 
-The Gold layer produces analytics-ready tables optimized for reporting and dashboards.
+---
 
-🔹 Gold Tables Created
-1️⃣ Top Active Users
+## How to Run the Project (Databricks)
 
-gold_top_active_users
+1. Clone the repository:
+   git clone https://github.com/Jeevanravimg/real-time-social-media-streaming.git
 
-Top 10 users by total engagement
+2. In Databricks:
+   Workspace → Home → Create → Git Folder  
+   Paste the repository URL
 
-Engagement score = likes + comments
+3. Run the data generator:
+   Open `POC_Streaming_Jeevan/Data_Generation_JSON`  
+   Execute the notebook to start streaming JSON generation
 
-2️⃣ Popular Posts
+4. Create a Delta Live Tables pipeline:
+   Add:
+   - Bronze_Layer.py
+   - Silver_Layer.py
+   - Gold_Layer.py
 
-gold_popular_posts
+5. Set target schema:
+   kusha_solutions.jeevan_streaming
 
-Top 10 posts by combined likes and comments
+6. Start the pipeline in **Continuous** or **Triggered** mode
 
-3️⃣ Daily Engagement Trends
+---
 
-gold_daily_engagement_trends
+## Data Disclaimer
 
-Daily likes, comments, and total engagement trends
+All datasets used in this project are **synthetically generated using Faker** and do not represent real users or real social media activity.
 
-4️⃣ User Engagement Summary
+---
 
-gold_user_engagement_summary
+## Key Learnings
+- Real-time streaming ingestion with Auto Loader
+- Delta Live Tables with data quality expectations
+- Medallion architecture for streaming workloads
+- Production-grade aggregations and dashboards
 
-Average likes and comments per post per user
+---
 
-📊 Dashboards
-🔹 Description
-
-Databricks dashboards are built on top of Gold tables to visualize real-time insights.
-
-🔹 Dashboard Queries
-SELECT * FROM kusha_solutions.jeevan_streaming.gold_top_active_users;
-SELECT * FROM kusha_solutions.jeevan_streaming.gold_popular_posts;
-SELECT * FROM kusha_solutions.jeevan_streaming.gold_daily_engagement_trends;
-SELECT * FROM kusha_solutions.jeevan_streaming.gold_user_engagement_summary;
-
-▶️ How to Run the Project (Databricks)
-Step 1: Clone Repository
-git clone https://github.com/Jeevanravimg/real-time-social-media-streaming.git
-
-Step 2: Open in Databricks
-
-Workspace → Home → Create → Git Folder
-
-Paste repository URL
-
-Step 3: Run Data Generator
-
-Open POC_Streaming_Jeevan/Data_Generation_JSON
-
-Run notebook to start continuous JSON generation
-
-Step 4: Configure DLT Pipeline
-
-Create a Delta Live Tables pipeline
-
-Add:
-
-Bronze_Layer.py
-
-Silver_Layer.py
-
-Gold_Layer.py
-
-Set target schema:
-
-kusha_solutions.jeevan_streaming
-
-Step 5: Start Pipeline
-
-Run pipeline in Continuous or Triggered mode
-
-🔐 Data Disclaimer
-
-All data used in this project is synthetically generated using Faker and does not represent real users or social media activity.
-
-🎯 Key Learnings
-
-Real-time streaming ingestion with Auto Loader
-
-Delta Live Tables with expectations
-
-Medallion architecture for streaming workloads
-
-Production-ready data quality enforcement
-
-Analytical aggregation for dashboards
-
-👤 Author
-
-Jeevan M G
+## Author
+**Jeevan M G**  
 Databricks | Data Engineering | Lakehouse Architecture

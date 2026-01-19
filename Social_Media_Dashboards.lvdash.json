@@ -1,0 +1,101 @@
+{
+  "datasets": [
+    {
+      "name": "bcd16b70",
+      "displayName": "gold_top_active_users",
+      "queryLines": [
+        "SELECT * FROM kusha_solutions.jeevan_streaming.gold_top_active_users"
+      ]
+    },
+    {
+      "name": "950535c5",
+      "displayName": "gold_popular_posts",
+      "queryLines": [
+        "SELECT * FROM kusha_solutions.jeevan_streaming.gold_popular_posts"
+      ]
+    },
+    {
+      "name": "a71bea24",
+      "displayName": "gold_daily_engagement_trends",
+      "queryLines": [
+        "SELECT * FROM kusha_solutions.jeevan_streaming.gold_daily_engagement_trends"
+      ]
+    },
+    {
+      "name": "ee9e0a0e",
+      "displayName": "gold_user_engagement_summary",
+      "queryLines": [
+        "SELECT * FROM kusha_solutions.jeevan_streaming.gold_user_engagement_summary"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "085737b8",
+      "displayName": "TOP_USERS",
+      "layout": [
+        {
+          "widget": {
+            "name": "da9ef8dd",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "bcd16b70",
+                  "fields": [
+                    {
+                      "name": "user_id",
+                      "expression": "`user_id`"
+                    },
+                    {
+                      "name": "sum(engagement_score)",
+                      "expression": "SUM(`engagement_score`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "user_id",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(engagement_score)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "label": {
+                  "show": true
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Top_Users\n"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 4,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    }
+  }
+}
